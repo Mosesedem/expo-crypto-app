@@ -18,7 +18,7 @@
           {
             "CFBundleURLName": "google",
             "CFBundleURLSchemes": [
-              "com.googleusercontent.apps.YOUR_GOOGLE_CLIENT_ID"
+              "com.googleusercontent.apps.60680372223-s4o5g7s86h68s84d49n6li2fp7i6h577.apps.googleusercontent.com"
             ]
           }
         ]
@@ -44,6 +44,12 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.60680372223-s4o5g7s86h68s84d49n6li2fp7i6h577.apps.googleusercontent.com"
+        }
+      ],
       "expo-router",
       "expo-font",
       "expo-web-browser",

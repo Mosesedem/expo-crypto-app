@@ -8,15 +8,27 @@ class AuthService {
   private readonly TOKEN_KEY = "auth_token";
   private readonly USER_KEY = "user_data";
 
-  async initializeGoogleSignIn() {
-    GoogleSignin.configure({
-      webClientId:
-        "60680372223-36rbkpi0sba6qe6r0mro01p2uhul6r4h.apps.googleusercontent.com",
-      iosClientId:
-        "60680372223-s4o5g7s86h68s84d49n6li2fp7i6h577.apps.googleusercontent.com",
-    });
-  }
+  // async initializeGoogleSignIn() {
+  //   GoogleSignin.configure({
+  //     webClientId:
+  //       "60680372223-36rbkpi0sba6qe6r0mro01p2uhul6r4h.apps.googleusercontent.com",
+  //     iosClientId:
+  //       "60680372223-s4o5g7s86h68s84d49n6li2fp7i6h577.apps.googleusercontent.com",
+  //   });
+  // }
 
+  async initializeGoogleSignIn() {
+    try {
+      GoogleSignin.configure({
+        webClientId:
+          "60680372223-36rbkpi0sba6qe6r0mro01p2uhul6r4h.apps.googleusercontent.com",
+        iosClientId:
+          "60680372223-s4o5g7s86h68s84d49n6li2fp7i6h577.apps.googleusercontent.com",
+      });
+    } catch (error) {
+      console.warn("Google Sign-in not available in development mode");
+    }
+  }
   async storeAuthData(token: string, user: User) {
     await SecureStore.setItemAsync(this.TOKEN_KEY, token);
     await SecureStore.setItemAsync(this.USER_KEY, JSON.stringify(user));
