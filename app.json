@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "expocryptoapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.cryptoramp.app",
@@ -57,7 +56,6 @@
       "expo-local-authentication",
       "expo-camera",
       "expo-barcode-scanner",
-
       [
         "expo-splash-screen",
         {
@@ -67,9 +65,6 @@
           "backgroundColor": "#ffffff"
         }
       ]
-    ],
-    "experiments": {
-      "typedRoutes": true
-    }
+    ]
   }
 }

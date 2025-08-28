@@ -87,7 +87,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.success && result.user) {
         dispatch({ type: 'SET_USER', payload: result.user });
       } else {
-        throw new Error(result.error || 'Google sign-in failed');
+        // Show user-friendly error message
+        const errorMessage = result.error || 'Google sign-in failed';
+        if (errorMessage.includes('Expo Go')) {
+          // Suggest alternative sign-in methods
+          throw new Error('Google Sign-In is not available in Expo Go. Please use "Sign In Anonymously" instead.');
+        }
+        throw new Error(errorMessage);
       }
     } catch (error) {
       dispatch({ type: 'SET_LOADING', payload: false });

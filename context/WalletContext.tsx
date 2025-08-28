@@ -1,7 +1,13 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { WalletBalance, Transaction } from '../types';
-import { apiService } from '../services/api';
-import { useAuth } from './AuthContext';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
+import { apiService } from "../services/api";
+import { Transaction, WalletBalance } from "../types";
+import { useAuth } from "./AuthContext";
 
 interface WalletState {
   balances: WalletBalance[];
@@ -18,12 +24,12 @@ interface WalletContextType extends WalletState {
 }
 
 type WalletAction =
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_REFRESHING'; payload: boolean }
-  | { type: 'SET_BALANCES'; payload: WalletBalance[] }
-  | { type: 'SET_TRANSACTIONS'; payload: Transaction[] }
-  | { type: 'ADD_TRANSACTION'; payload: Transaction }
-  | { type: 'UPDATE_TRANSACTION'; payload: Transaction };
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_REFRESHING"; payload: boolean }
+  | { type: "SET_BALANCES"; payload: WalletBalance[] }
+  | { type: "SET_TRANSACTIONS"; payload: Transaction[] }
+  | { type: "ADD_TRANSACTION"; payload: Transaction }
+  | { type: "UPDATE_TRANSACTION"; payload: Transaction };
 
 const initialState: WalletState = {
   balances: [],
@@ -34,23 +40,23 @@ const initialState: WalletState = {
 
 function walletReducer(state: WalletState, action: WalletAction): WalletState {
   switch (action.type) {
-    case 'SET_LOADING':
+    case "SET_LOADING":
       return { ...state, isLoading: action.payload };
-    case 'SET_REFRESHING':
+    case "SET_REFRESHING":
       return { ...state, isRefreshing: action.payload };
-    case 'SET_BALANCES':
+    case "SET_BALANCES":
       return { ...state, balances: action.payload };
-    case 'SET_TRANSACTIONS':
+    case "SET_TRANSACTIONS":
       return { ...state, transactions: action.payload };
-    case 'ADD_TRANSACTION':
+    case "ADD_TRANSACTION":
       return {
         ...state,
         transactions: [action.payload, ...state.transactions],
       };
-    case 'UPDATE_TRANSACTION':
+    case "UPDATE_TRANSACTION":
       return {
         ...state,
-        transactions: state.transactions.map(tx =>
+        transactions: state.transactions.map((tx) =>
           tx.id === action.payload.id ? action.payload : tx
         ),
       };
@@ -72,22 +78,19 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   }, [isAuthenticated]);
 
   const loadInitialData = async () => {
-    dispatch({ type: 'SET_LOADING', payload: true });
-    await Promise.all([
-      refreshBalances(),
-      refreshTransactions(),
-    ]);
-    dispatch({ type: 'SET_LOADING', payload: false });
+    dispatch({ type: "SET_LOADING", payload: true });
+    await Promise.all([refreshBalances(), refreshTransactions()]);
+    dispatch({ type: "SET_LOADING", payload: false });
   };
 
   const refreshBalances = async () => {
     try {
       const response = await apiService.getWalletBalances();
       if (response.success && response.data) {
-        dispatch({ type: 'SET_BALANCES', payload: response.data });
+        dispatch({ type: "SET_BALANCES", payload: response.data });
       }
     } catch (error) {
-      console.error('Failed to refresh balances:', error);
+      console.error("Failed to refresh balances:", error);
     }
   };
 
@@ -95,10 +98,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     try {
       const response = await apiService.getTransactions();
       if (response.success && response.data) {
-        dispatch({ type: 'SET_TRANSACTIONS', payload: response.data });
+        dispatch({ type: "SET_TRANSACTIONS", payload: response.data });
       }
     } catch (error) {
-      console.error('Failed to refresh transactions:', error);
+      console.error("Failed to refresh transactions:", error);
     }
   };
 
@@ -107,7 +110,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const response = await apiService.getDepositAddress(symbol);
       return response.success && response.data ? response.data.address : null;
     } catch (error) {
-      console.error('Failed to get deposit address:', error);
+      console.error("Failed to get deposit address:", error);
       return null;
     }
   };
@@ -117,7 +120,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       const response = await apiService.exportMnemonic();
       return response.success && response.data ? response.data.mnemonic : null;
     } catch (error) {
-      console.error('Failed to export mnemonic:', error);
+      console.error("Failed to export mnemonic:", error);
       return null;
     }
   };
@@ -140,7 +143,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 export function useWallet() {
   const context = useContext(WalletContext);
   if (context === undefined) {
-    throw new Error('useWallet must be used within a WalletProvider');
+    throw new Error("useWallet must be used within a WalletProvider");
   }
   return context;
 }

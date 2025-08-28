@@ -1,24 +1,23 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import * as LocalAuthentication from "expo-local-authentication";
 import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
 import { User } from "../types";
 import { apiService } from "./api";
 
 class AuthService {
   private readonly TOKEN_KEY = "auth_token";
   private readonly USER_KEY = "user_data";
-
-  // async initializeGoogleSignIn() {
-  //   GoogleSignin.configure({
-  //     webClientId:
-  //       "60680372223-36rbkpi0sba6qe6r0mro01p2uhul6r4h.apps.googleusercontent.com",
-  //     iosClientId:
-  //       "60680372223-s4o5g7s86h68s84d49n6li2fp7i6h577.apps.googleusercontent.com",
-  //   });
-  // }
+  private isExpoGo = Platform.OS !== 'web' && !__DEV__;
 
   async initializeGoogleSignIn() {
     try {
+      // Check if Google Sign-In is available (not in Expo Go)
+      if (this.isExpoGo) {
+        console.warn("Google Sign-In not available in Expo Go. Use development build for full functionality.");
+        return;
+      }
+
       GoogleSignin.configure({
         webClientId:
           "60680372223-36rbkpi0sba6qe6r0mro01p2uhul6r4h.apps.googleusercontent.com",
@@ -26,7 +25,7 @@ class AuthService {
           "60680372223-s4o5g7s86h68s84d49n6li2fp7i6h577.apps.googleusercontent.com",
       });
     } catch (error) {
-      console.warn("Google Sign-in not available in development mode");
+      console.warn("Google Sign-In initialization failed:", error);
     }
   }
   async storeAuthData(token: string, user: User) {
@@ -54,6 +53,14 @@ class AuthService {
     error?: string;
   }> {
     try {
+      // Check if Google Sign-In is available
+      if (this.isExpoGo) {
+        return { 
+          success: false, 
+          error: "Google Sign-In not available in Expo Go. Please use a development build or sign in anonymously." 
+        };
+      }
+
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
 
@@ -148,9 +155,13 @@ class AuthService {
 
   async signOut() {
     try {
-      await GoogleSignin.signOut();
+      // Only attempt Google sign-out if it's available
+      if (!this.isExpoGo) {
+        await GoogleSignin.signOut();
+      }
     } catch (error) {
       // Google sign-out failed, but continue with local cleanup
+      console.warn("Google sign-out failed:", error);
     }
     await this.clearAuthData();
   }
